@@ -1,0 +1,19 @@
+{
+	"name": "telegram-bot",
+	"version": "1.0.0",
+	"description": "A simple Telegram bot using Telegraf",
+	"type": "module",
+	"main": "bot2.js",
+	"scripts": {
+		"start": "node bot2.js"
+	},
+	"dependencies": {
+		"telegraf": "latest",
+		"@telegraf/session": "latest",
+		"kysely": "latest",
+		"better-sqlite3": "latest",
+		"dotenv": "latest",
+		"sequelize": "latest",
+		"sqlite3": "latest"
+	}
+}
