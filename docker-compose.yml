@@ -14,7 +14,7 @@ services:
     command: ["./wait-for-it.sh", "db:5432", "--", "npm", "start"]
     volumes:
       - ./wait-for-it.sh:/app/wait-for-it.sh
-    # restart: always
+    restart: always
 
   db:
     image: postgres:13
@@ -23,8 +23,8 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
-    # restart: always
+      - pgdata:/var/lib/postgresql/data
+    restart: always
 
 volumes:
   pgdata:
