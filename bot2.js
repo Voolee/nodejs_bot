@@ -1,16 +1,17 @@
 import 'dotenv/config'
 import { Telegraf, session } from 'telegraf'
-import { SQLite } from '@telegraf/session/sqlite'
 import { Sequelize, Model, DataTypes } from 'sequelize'
 
-const store = SQLite({
-	filename: './telegraf-sessions.sqlite',
-})
-
-const Database = new Sequelize({
-	dialect: 'sqlite',
-	storage: 'telegraf-predictor.sqlite',
-})
+const sequelize = new Sequelize(
+	process.env.DB_NAME,
+	process.env.DB_USER,
+	process.env.DB_PASSWORD,
+	{
+		host: 'db',
+		dialect: 'postgres',
+		logging: false,
+	}
+)
 
 class User extends Model {}
 
@@ -28,23 +29,22 @@ User.init(
 		},
 	},
 	{
-		sequelize: Database,
+		sequelize,
 		modelName: 'User',
 	}
 )
 
-User.sync()
+User.sync({ alter: true })
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
-bot.use(session({ store }))
+bot.use(session())
 
 bot.on('text', async ctx => {
 	let user
 	try {
 		if (!ctx.session) ctx.session = { count: 1 }
 
-		// Проверяем наличие ID у отправителя сообщения
 		if (!ctx.from || !ctx.from.id) {
 			console.error('ctx.from or ctx.from.id is undefined!', ctx.from)
 			return
@@ -54,7 +54,6 @@ bot.on('text', async ctx => {
 			where: { telegramid: ctx.from.id },
 		})
 
-		// Если пользователь не был найден или создан, выходим
 		if (!foundOrCreatedUser) {
 			console.error('Failed to find or create user.')
 			return
@@ -70,7 +69,6 @@ bot.on('text', async ctx => {
 		`Hello user with ID: ${user.id}, your count is: ${ctx.session.count}, and your Telegram ID is: ${ctx.from.id}`
 	)
 	ctx.session.count += 1
-	console.log(ctx)
 })
 
 bot.catch(err => console.log(err))

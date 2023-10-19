@@ -8,12 +8,10 @@
 		"start": "node bot2.js"
 	},
 	"dependencies": {
-		"telegraf": "latest",
 		"@telegraf/session": "latest",
-		"kysely": "latest",
-		"better-sqlite3": "latest",
 		"dotenv": "latest",
-		"sequelize": "latest",
-		"sqlite3": "latest"
+		"pg": "^8.11.3",
+		"sequelize": "^6.33.0",
+		"telegraf": "latest"
 	}
 }
