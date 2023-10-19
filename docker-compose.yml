@@ -11,9 +11,9 @@ services:
       BOT_TOKEN: ${BOT_TOKEN}
     env_file:
       - ./.env
-    command: ["./wait-for-it.sh", "db:5432", "--", "npm", "start"]
+    command: ["/usr/src/app/wait-for-it.sh", "db:5432", "--", "npm", "start"]
     volumes:
-      - ./wait-for-it.sh:/app/wait-for-it.sh
+      - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh
     restart: always
 
   db:
