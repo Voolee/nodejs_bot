@@ -27,6 +27,10 @@ User.init(
 			allowNull: false,
 			unique: true,
 		},
+		count: {
+			type: DataTypes.INTEGER,
+			defaultValue: 0,
+		},
 	},
 	{
 		sequelize,
@@ -34,7 +38,7 @@ User.init(
 	}
 )
 
-User.sync({ alter: true })
+User.sync()
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
@@ -43,8 +47,6 @@ bot.use(session())
 bot.on('text', async ctx => {
 	let user
 	try {
-		if (!ctx.session) ctx.session = { count: 1 }
-
 		if (!ctx.from || !ctx.from.id) {
 			console.error('ctx.from or ctx.from.id is undefined!', ctx.from)
 			return
@@ -65,10 +67,13 @@ bot.on('text', async ctx => {
 		return
 	}
 
+	// Обновляем счетчик пользователя в базе данных
+	user.count += 1
+	await user.save()
+
 	await ctx.reply(
-		`Hello user with ID: ${user.id}, your count is: ${ctx.session.count}, and your Telegram ID is: ${ctx.from.id}`
+		`Hello user with ID: ${user.id}, your count is: ${user.count}, and your Telegram ID is: ${ctx.from.id}`
 	)
-	ctx.session.count += 1
 })
 
 bot.catch(err => console.log(err))
